@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <!-- 500 错误图标：显示服务器图标和闪电 -->
+    <style>
+        .primary { fill: #409EFF; }
+        .secondary { fill: #C0C4CC; }
+        .warning { fill: #E6A23C; }
+    </style>
+    <rect class="secondary" x="150" y="100" width="200" height="300" rx="20" fill-opacity="0.2"/>
+    <rect class="primary" x="180" y="150" width="140" height="20" rx="10"/>
+    <rect class="primary" x="180" y="190" width="140" height="20" rx="10"/>
+    <path class="warning" d="M250,150 l50,100 h-30 l30,100 l-80,-120 h40 z"/>
+</svg> 

@@ -1,0 +1,77 @@
+:root {
+    /* 主题色 */
+    --primary-color: #409EFF;
+    --primary-light: rgba(64, 158, 255, 0.1);
+    --primary-hover: rgba(64, 158, 255, 0.2);
+    
+    /* 文字颜色 */
+    --text-primary: #333333;
+    --text-regular: #666666;
+    --text-secondary: #999999;
+    
+    /* 背景色 */
+    --bg-white: rgba(255, 255, 255, 0.9);
+    --bg-mask: rgba(0, 0, 0, 0.3);
+    
+    /* 卡片效果 */
+    --card-radius: 15px;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --card-hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    
+    /* 动画时间 */
+    --transition-time: 0.3s;
+}
+
+/* 全局卡片样式 */
+.common-card {
+    background: var(--bg-white);
+    backdrop-filter: blur(10px);
+    border-radius: var(--card-radius);
+    border: none;
+    transition: all var(--transition-time) ease;
+}
+
+.common-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+/* 全局标题样式 */
+.section-title {
+    font-size: 28px;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 16px;
+    color: var(--text-regular);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* 全局标签样式 */
+.common-tag {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border: none;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* 全局动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-time) ease-out;
+} 

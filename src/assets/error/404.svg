@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <!-- 404 错误图标：显示断开的链接 -->
+    <style>
+        .primary { fill: #409EFF; }
+        .secondary { fill: #C0C4CC; }
+    </style>
+    <path class="secondary" d="M100,200 h100 v100 h-100 z" fill-opacity="0.2"/>
+    <path class="secondary" d="M300,200 h100 v100 h-100 z" fill-opacity="0.2"/>
+    <path class="primary" d="M200,250 h100" stroke-width="20" fill="none" stroke="#409EFF" stroke-dasharray="10,10"/>
+    <circle class="primary" cx="150" cy="250" r="30"/>
+    <circle class="primary" cx="350" cy="250" r="30"/>
+</svg> 

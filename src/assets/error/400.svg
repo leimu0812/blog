@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+    <!-- 400 错误图标：显示一个带有问号的文档 -->
+    <style>
+        .primary { fill: #409EFF; }
+        .secondary { fill: #C0C4CC; }
+    </style>
+    <path class="secondary" d="M100,100 h300 v300 h-300 z" fill-opacity="0.2"/>
+    <path class="primary" d="M150,150 h200 v40 h-200 z"/>
+    <path class="primary" d="M150,220 h100 v40 h-100 z"/>
+    <circle class="primary" cx="350" cy="350" r="50"/>
+    <text x="330" y="370" font-size="40" fill="white">?</text>
+</svg> 
