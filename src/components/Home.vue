@@ -59,8 +59,8 @@ const bannerContent = computed(() => {
             }
         case '/show':
             return {
-                title: '频道分类',
-                desc: '探索不同的世界'
+                title: '归档',
+                desc: '时光的足迹，思考的印记'
             }
         case '/about':
             return {
@@ -296,21 +296,48 @@ const showBanner = computed(() => {
 
 @media (max-width: 768px) {
     .banner-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
     }
 
     .banner-desc {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        padding: 0 15px;
     }
 
     .banner-section.half-screen {
-        height: 40vh;
-        padding-top: 60px;
+        height: 35vh;
     }
 
     .content-section.half-screen-content {
-        margin-top: -30px;
-        border-radius: 0;
+        margin-top: -25px;
+        padding: 20px 15px;
+    }
+
+    .custom-backtop {
+        width: 40px;
+        height: 40px;
+        right: 20px !important;
+        bottom: 20px !important;
+    }
+
+    .normal-content {
+        padding: 15px;
+        margin-top: 50px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .banner-title {
+        font-size: 1.5rem;
+    }
+
+    .banner-desc {
+        font-size: 0.8rem;
+    }
+
+    .content-section {
+        padding: 15px 10px;
     }
 }
 

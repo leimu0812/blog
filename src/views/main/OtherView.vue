@@ -4,9 +4,8 @@
             title="其他功能" 
             description="发现更多有趣的功能"
         />
-        <!-- 时间轴部分 -->
         <el-row :gutter="20">
-            <el-col :span="16">
+            <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
                 <el-card class="timeline-card">
                     <template #header>
                         <div class="card-header">
@@ -23,7 +22,6 @@
                     </el-timeline>
                 </el-card>
 
-                <!-- 聊天室入口 -->
                 <el-card class="chat-card">
                     <template #header>
                         <div class="card-header">
@@ -41,8 +39,7 @@
                 </el-card>
             </el-col>
 
-            <el-col :span="8">
-                <!-- 网站统计 -->
+            <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                 <el-card class="stat-card">
                     <template #header>
                         <div class="card-header">
@@ -66,7 +63,6 @@
                     </div>
                 </el-card>
 
-                <!-- 我的想法 -->
                 <el-card class="thoughts-card">
                     <template #header>
                         <div class="card-header">
@@ -82,7 +78,6 @@
                     </div>
                 </el-card>
 
-                <!-- 实用工具 -->
                 <el-card class="tools-card">
                     <template #header>
                         <div class="card-header">
@@ -308,8 +303,157 @@ const handleToolClick = (tool: any) => {
         padding: 10px;
     }
 
+    .el-row {
+        margin: 0 !important;
+    }
+
+    :deep(.el-col) {
+        padding: 0 !important;
+    }
+
+    .timeline-card,
+    .chat-card,
+    .stat-card,
+    .thoughts-card,
+    .tools-card {
+        margin-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    :deep(.el-card__header) {
+        padding: 15px;
+    }
+
+    :deep(.el-card__body) {
+        padding: 15px;
+    }
+
+    :deep(.el-timeline) {
+        padding-left: 15px;
+    }
+
+    :deep(.el-timeline-item__content) {
+        padding-left: 15px;
+    }
+
+    :deep(.el-timeline-item__node) {
+        left: -2px;
+    }
+
+    .stat-item {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .stat-item .value {
+        font-size: 16px;
+    }
+
+    .thought-item {
+        padding: 8px;
+    }
+
+    .thought-content {
+        font-size: 14px;
+    }
+
+    .thought-time {
+        font-size: 11px;
+    }
+
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .tool-item {
+        padding: 12px;
+    }
+
+    .tool-item span {
+        font-size: 13px;
+    }
+
+    .tool-status {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .other-container {
+        padding: 8px;
+    }
+
     .tools-grid {
         grid-template-columns: 1fr;
+    }
+
+    .card-header {
+        font-size: 14px;
+    }
+
+    :deep(.el-timeline-item__content h4) {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    :deep(.el-timeline-item__content p) {
+        font-size: 12px;
+    }
+
+    :deep(.el-timeline-item__timestamp) {
+        font-size: 12px;
+    }
+
+    .stat-list {
+        gap: 10px;
+    }
+
+    .stat-item {
+        padding: 6px;
+    }
+
+    .stat-item .label {
+        font-size: 13px;
+    }
+
+    .stat-item .value {
+        font-size: 15px;
+    }
+
+    :deep(.el-empty__description) {
+        font-size: 13px;
+    }
+
+    :deep(.el-button) {
+        padding: 8px 15px;
+        font-size: 13px;
+    }
+}
+
+:deep(.el-row--flex) {
+    margin: 0 !important;
+    width: 100%;
+}
+
+:deep(.el-col) {
+    padding: 0 10px;
+}
+
+@media (hover: none) {
+    .timeline-card:hover,
+    .chat-card:hover,
+    .stat-card:hover,
+    .thoughts-card:hover,
+    .tools-card:hover {
+        transform: none;
+    }
+
+    .stat-item:hover,
+    .thought-item:hover,
+    .tool-item:hover {
+        transform: none;
     }
 }
 </style>

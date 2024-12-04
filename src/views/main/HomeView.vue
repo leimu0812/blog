@@ -1,6 +1,6 @@
 <template>
     <el-row :gutter="20">
-        <el-col :span="8">
+        <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
             <el-card class="box-card-info" shadow="hover">
                 <div class="box-card-info-content">
                     <div class="avatar-wrapper">
@@ -27,6 +27,26 @@
                     </div>
                 </div>
             </el-card>
+            <el-card class="box-card-info-tags">
+                <template #header>
+                    <div class="tags-header">
+                        <Icon name="tags" :size="16" />
+                        <span>标签</span>
+                    </div>
+                </template>
+                <div class="tags-content">
+                    <el-tag
+                        v-for="tag in tags"
+                        :key="tag.name"
+                        :type="tag.type"
+                        class="tag-item"
+                        effect="light"
+                        @click="handleTagClick(tag.name)"
+                    >
+                        {{ tag.name }}({{ tag.count }})
+                    </el-tag>
+                </div>
+            </el-card>
             <el-card class="box-card-info-tags hot-articles">
                 <template #header>
                     <div class="tags-header">
@@ -44,7 +64,7 @@
             </el-card>
         </el-col>
 
-        <el-col :span="16">
+        <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
             <el-input class="search-input" v-model="searchText" placeholder="搜索文章...">
                 <template #prefix>
                     <Icon name="search" :size="16" />
@@ -106,8 +126,8 @@ const router = useRouter()
 // 用户信息
 const info = ref({
     user: {
-        name: '诗意生活',
-        motto: '记录生活，书写人生',
+        name: '心如镜映月明',
+        motto: 'The heart is like a mirror reflecting the moon.',
         circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
     },
     type: [
@@ -122,7 +142,7 @@ const socials = ref([
     { icon: 'github', link: 'https://github.com', title: 'Github' },
     { icon: 'envelope', link: 'mailto:example@example.com', title: '邮箱' },
     { icon: 'geo-alt', link: '#', title: '坐标：北京' },
-    { icon: 'person', link: '#', title: '关于我' }
+    { icon: 'person', link: '', title: '关于我' }
 ])
 
 // 搜索文本
@@ -160,6 +180,24 @@ const articles = ref([
         isTop: false
     }
 ])
+
+// 添加标签数据
+const tags = ref([
+    { name: 'Vue', count: 12, type: '' },
+    { name: 'JavaScript', count: 8, type: 'success' },
+    { name: 'TypeScript', count: 6, type: 'info' },
+    { name: 'CSS', count: 5, type: 'warning' },
+    { name: 'HTML', count: 4, type: 'danger' },
+    { name: 'Node.js', count: 3, type: '' },
+    { name: '前端', count: 10, type: 'success' },
+    { name: '后端', count: 7, type: 'info' }
+])
+
+// 标签点击处理函数
+const handleTagClick = (tagName: string) => {
+    // 这里可以添加标签点击后的处理逻辑，比如跳转到标签相关文章列表页
+    console.log('Tag clicked:', tagName)
+}
 
 // 跳转到文章详情
 const goToArticle = (id: number) => {
@@ -308,6 +346,11 @@ const goToArticle = (id: number) => {
     backdrop-filter: blur(10px);
     border-radius: 15px;
     border: none;
+    transition: transform 0.3s ease;
+}
+
+.box-card-info-tags:hover {
+    transform: translateY(-5px);
 }
 
 .tags-header {
@@ -633,5 +676,162 @@ const goToArticle = (id: number) => {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* 添加标签相关样式 */
+.tags-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+
+.tag-item {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.tag-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .el-row {
+        margin: 0 !important;
+    }
+
+    /* 调整卡片间距 */
+    .box-card-info,
+    .box-card-info-tags,
+    .article-card {
+        margin: 10px 0;
+    }
+
+    /* 调整文章列表样式 */
+    .article-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .article-cover {
+        flex: none;
+        width: 100%;
+        height: 200px;
+    }
+
+    /* 调整文章标题大小 */
+    .article-title {
+        font-size: 1.2rem;
+    }
+
+    /* 调整文章摘要 */
+    .article-summary {
+        font-size: 0.9rem;
+    }
+
+    /* 调整元信息布局 */
+    .article-meta {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* 调整用户信息部分 */
+    .user-name {
+        font-size: 1.3rem;
+    }
+
+    .user-motto {
+        font-size: 0.85rem;
+    }
+
+    /* 调整统计数据显示 */
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .stat-name {
+        font-size: 0.8rem;
+    }
+
+    /* 调整社交链接样式 */
+    .social-item {
+        width: 32px;
+        height: 32px;
+    }
+
+    /* 调整搜索框样式 */
+    .search-input {
+        margin: 10px 0;
+    }
+
+    /* 调整标签云样式 */
+    .tags-content {
+        gap: 8px;
+    }
+
+    .tag-item {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* 调整热门文章样式 */
+    .hot-article-item {
+        padding: 10px 5px;
+    }
+
+    .article-index {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        margin-right: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* 更小屏幕的特殊调整 */
+    .user-avatar {
+        width: 100px !important;
+        height: 100px !important;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+    }
+
+    .article-cover {
+        height: 180px;
+    }
+
+    .social-links {
+        gap: 10px;
+    }
+
+    .stats-container {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .stat-item {
+        flex: 1;
+        min-width: calc(33.33% - 10px);
+    }
+
+    /* 调整内边距 */
+    .box-card-info-content,
+    .article-card {
+        padding: 15px 10px;
+    }
+}
+
+/* 修复栅格间距问题 */
+:deep(.el-row--flex) {
+    margin: 0 !important;
+    width: 100%;
+}
+
+:deep(.el-col) {
+    padding: 0 10px;
 }
 </style>

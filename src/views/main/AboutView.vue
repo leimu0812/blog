@@ -8,15 +8,15 @@
                 </div>
                 <div class="profile-title">
                     <h1>{{ profile.name }}</h1>
-                    <p class="profile-subtitle">{{ profile.title }}</p>
-                    <div class="profile-tags">
+                    <!-- <p class="profile-subtitle">{{ profile.title }}</p> -->
+                    <!-- <div class="profile-tags">
                         <el-tag 
                             v-for="tag in profile.tags" 
                             :key="tag"
                             class="common-tag profile-tag">
                             {{ tag }}
                         </el-tag>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="profile-content">
@@ -34,52 +34,6 @@
                 </div>
             </div>
         </el-card>
-
-        <!-- 技能特长卡片 -->
-        <el-row :gutter="20" class="fade-in" style="animation-delay: 0.2s">
-            <el-col :xs="24" :sm="12">
-                <el-card class="common-card skills-card">
-                    <template #header>
-                        <div class="card-header">
-                            <Icon name="award" :size="18" />
-                            <span>技能特长</span>
-                        </div>
-                    </template>
-                    <div class="skills-content">
-                        <div v-for="skill in skills" :key="skill.name" class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">{{ skill.name }}</span>
-                                <span class="skill-level">{{ skill.level }}%</span>
-                            </div>
-                            <el-progress 
-                                :percentage="skill.level"
-                                :color="skill.color"
-                                :stroke-width="15"
-                                :show-text="false"
-                            />
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-
-            <el-col :xs="24" :sm="12">
-                <el-card class="common-card site-info-card">
-                    <template #header>
-                        <div class="card-header">
-                            <Icon name="display" :size="18" />
-                            <span>网站信息</span>
-                        </div>
-                    </template>
-                    <div class="site-info-content">
-                        <div v-for="info in siteInfo" :key="info.label" class="info-item">
-                            <Icon :name="info.icon" :size="16" />
-                            <span class="info-label">{{ info.label }}：</span>
-                            <span class="info-value">{{ info.value }}</span>
-                        </div>
-                    </div>
-                </el-card>
-            </el-col>
-        </el-row>
 
         <!-- 个人经历 -->
         <el-card class="common-card timeline-card fade-in" style="animation-delay: 0.4s">
@@ -108,32 +62,19 @@
 import { ref } from 'vue'
 import Icon from '@/components/Icon.vue'
 
+
 const profile = ref({
-    name: '诗意生活',
+    name: '心如镜映月明',
     title: '热爱生活，追求美好',
     avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-    quote: '生活不止眼前的苟且，还有诗和远方的田野。',
+    quote: 'The heart is like a mirror reflecting the moon .',
     tags: ['00后', '程序员', '游戏玩家', '一个人'],
     socials: [
-        { name: 'Github', icon: 'github', link: 'https://github.com' },
-        { name: '博客', icon: 'globe', link: 'https://blog.example.com' },
-        { name: '邮箱', icon: 'envelope', link: 'mailto:example@example.com' }
+        { name: 'Github', icon: 'github', link: 'https://github.com/leimu0812' },
+        { name: '邮箱', icon: 'envelope', link: 'https://mail.aliyun.com/' },
+        { name: 'B站', icon: 'bilibili', link: 'https://space.bilibili.com/179362285' },
     ]
 })
-
-const skills = ref([
-    { name: '文学创作', level: 90, color: '#409EFF' },
-    { name: '摄影技术', level: 85, color: '#67C23A' },
-    { name: '美食烹饪', level: 75, color: '#E6A23C' },
-    { name: '生活美学', level: 95, color: '#F56C6C' }
-])
-
-const siteInfo = ref([
-    { label: '建站时间', value: '2024年3月21日', icon: 'calendar3' },
-    { label: '所在地区', value: '中国·北京', icon: 'geo-alt' },
-    { label: '联系邮箱', value: 'example@example.com', icon: 'envelope' },
-    { label: '备案信息', value: '京ICP备xxxxxxxx号', icon: 'shield-check' }
-])
 
 const experiences = ref([
     {
