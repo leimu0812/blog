@@ -1,33 +1,31 @@
 # blog-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+基于Vite创建的Vue3+Ts项目
 
-## Recommended IDE Setup
+## 推荐的IDE配置
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (禁用 Vetur).
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## 项目设置
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 开发时编译和热重载
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### 为生产进行类型检查、编译和压缩
 
 ```sh
 npm run build
 ```
+
+## 配套地址
+
+前端：https://github.com/leimu0812/blog.git
+前端管理系统：https://github.com/leimu0812/blog_manage_vue.git
+后台：https://github.com/leimu0812/blog_system_end.git
