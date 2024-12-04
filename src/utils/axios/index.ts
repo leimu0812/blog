@@ -2,30 +2,33 @@ import axios from 'axios'
 import { ElMessage } from 'element-plus'
 import router from '@/utils/route'
 
+// 导入环境变量
+const baseURL = import.meta.env.VITE_API_BASE_URL
+
 // 创建 axios 实例
-const service = axios.create({
-    baseURL: '/api',  // 测试用的基础路径
-    timeout: 10000
+const instance = axios.create({
+    baseURL,  // 使用环境变量中的基础路径
+    timeout: 5000
 })
 
 // 扩展 request 方法
 const request = {
     get<T>(url: string, params?: any) {
-        return service.get<any, T>(url, { params })
+        return instance.get<any, T>(url, { params })
     },
     post<T>(url: string, data?: any) {
-        return service.post<any, T>(url, data)
+        return instance.post<any, T>(url, data)
     },
     put<T>(url: string, data?: any) {
-        return service.put<any, T>(url, data)
+        return instance.put<any, T>(url, data)
     },
     delete<T>(url: string, params?: any) {
-        return service.delete<any, T>(url, { params })
+        return instance.delete<any, T>(url, { params })
     }
 }
 
 // 响应拦截器
-service.interceptors.response.use(
+instance.interceptors.response.use(
     response => response.data,
     error => {
         const { response } = error
