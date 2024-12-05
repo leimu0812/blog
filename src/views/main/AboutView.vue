@@ -35,6 +35,51 @@
             </div>
         </el-card>
 
+        <!-- 群组信息卡片 -->
+        <el-card class="common-card groups-card fade-in" style="animation-delay: 0.3s">
+            <template #header>
+                <div class="card-header">
+                    <Icon name="people-fill" :size="18" />
+                    <span>交流群组</span>
+                </div>
+            </template>
+            <div class="groups-grid">
+                <div v-for="(group, index) in groups" 
+                     :key="index" 
+                     class="group-item">
+                    <div class="group-icon">
+                        <Icon :name="group.icon" :size="24" />
+                    </div>
+                    <div class="group-info">
+                        <div class="group-name">{{ group.name }}</div>
+                        <div class="group-id">{{ group.id }}</div>
+                        <div class="group-desc">{{ group.description }}</div>
+                    </div>
+                </div>
+            </div>
+        </el-card>
+
+        <!-- 社交软件信息卡片 -->
+        <el-card class="common-card social-card fade-in" style="animation-delay: 0.2s">
+            <template #header>
+                <div class="card-header">
+                    <Icon name="people" :size="18" />
+                    <span>社交联系</span>
+                </div>
+            </template>
+            <div class="social-grid">
+                <div v-for="(contact, index) in contacts" 
+                     :key="index" 
+                     class="contact-item">
+                    <Icon :name="contact.icon" :size="24" />
+                    <div class="contact-info">
+                        <div class="contact-name">{{ contact.name }}</div>
+                        <div class="contact-value">{{ contact.value }}</div>
+                    </div>
+                </div>
+            </div>
+        </el-card>
+
         <!-- 个人经历 -->
         <el-card class="common-card timeline-card fade-in" style="animation-delay: 0.4s">
             <template #header>
@@ -70,8 +115,8 @@ const profile = ref({
     quote: 'The heart is like a mirror reflecting the moon .',
     tags: ['00后', '程序员', '游戏玩家', '一个人'],
     socials: [
+        { name: 'Gitee', icon: 'gitee', link: 'https://gitee.com/leimu0812' },
         { name: 'Github', icon: 'github', link: 'https://github.com/leimu0812' },
-        { name: '邮箱', icon: 'envelope', link: 'https://mail.aliyun.com/' },
         { name: 'B站', icon: 'bilibili', link: 'https://space.bilibili.com/179362285' },
     ]
 })
@@ -79,17 +124,39 @@ const profile = ref({
 const experiences = ref([
     {
         time: '2018年6月',
-        title: '接触编程',
-        content: '开始学习编程',
+        title: '111',
+        content: '111',
         type: 'success',
         color: '#0bbd87'
     },
     {
         time: '2024年4月',
-        title: '个人博客维护',
-        content: '开始记录生活，分享感动',
+        title: '222',
+        content: '222',
         type: 'success',
         color: '#0bbd87'
+    }
+])
+
+const contacts = ref([
+    { name: 'QQ', icon: 'tencent-qq', value: '123456789' },
+    { name: '微信', icon: 'wechat', value: 'your_wechat_id' },
+    { name: '邮箱', icon: 'envelope', value: 'example@email.com' },
+    { name: 'B站', icon: 'bilibili', value: '心如镜映月明' },
+])
+
+const groups = ref([
+    {
+        name: 'QQ交流群',
+        icon: 'tencent-qq',
+        id: '123456789',
+        description: '技术交流与分享'
+    },
+    {
+        name: '微信交流群',
+        icon: 'wechat',
+        id: '请添加微信号 xxx',
+        description: '日常交流与讨论'
     }
 ])
 </script>
@@ -273,5 +340,104 @@ const experiences = ref([
     .social-links {
         flex-wrap: wrap;
     }
+}
+
+.social-card {
+    margin-bottom: 30px;
+}
+
+.social-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contact-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.contact-value {
+    color: var(--text-regular);
+    font-size: 14px;
+}
+
+.groups-card {
+    margin-bottom: 30px;
+}
+
+.groups-grid {
+    display: grid;
+    gap: 20px;
+    padding: 10px;
+}
+
+.group-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    transition: all 0.3s ease;
+}
+
+.group-item:hover {
+    transform: translateX(5px);
+    box-shadow: var(--card-shadow);
+}
+
+.group-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--primary-color);
+    color: white;
+}
+
+.group-info {
+    flex: 1;
+}
+
+.group-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.group-id {
+    font-size: 14px;
+    color: var(--text-regular);
+    margin-bottom: 8px;
+}
+
+.group-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
 }
 </style>

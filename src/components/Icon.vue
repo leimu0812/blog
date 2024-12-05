@@ -1,5 +1,17 @@
 <template>
-    <i :class="['bi', `bi-${name}`]" :style="style"></i>
+    <div class="icon-wrapper" :style="wrapperStyle">
+        <i v-if="!isCustomIcon" :class="`bi bi-${props.name}`" :style="iconStyle"></i>
+        
+        <img v-else-if="name === 'bilibili'" 
+             src="@/assets/icons/bilibili.svg" 
+             :style="iconStyle" 
+             alt="bilibili" />
+             
+        <img v-else-if="name === 'gitee'" 
+             src="@/assets/icons/gitee.svg" 
+             :style="iconStyle" 
+             alt="gitee" />
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -16,20 +28,37 @@ const props = defineProps({
     },
     color: {
         type: String,
-        default: ''
+        default: 'currentColor'
     }
 })
 
-const style = computed(() => ({
-    fontSize: typeof props.size === 'number' ? `${props.size}px` : props.size,
-    color: props.color
+const isCustomIcon = computed(() => {
+    return ['bilibili', 'gitee'].includes(props.name)
+})
+
+const iconStyle = computed(() => ({
+    width: typeof props.size === 'number' ? `${props.size}px` : props.size,
+    height: typeof props.size === 'number' ? `${props.size}px` : props.size,
+    color: props.color,
+}))
+
+const wrapperStyle = computed(() => ({
+    width: typeof props.size === 'number' ? `${props.size}px` : props.size,
+    height: typeof props.size === 'number' ? `${props.size}px` : props.size,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
 }))
 </script>
 
 <style scoped>
-.bi {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.icon-wrapper {
+    line-height: 0;
+}
+
+.icon-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 </style> 

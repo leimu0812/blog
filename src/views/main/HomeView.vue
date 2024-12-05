@@ -140,9 +140,10 @@ const info = ref({
 // 社交链接
 const socials = ref([
     { icon: 'github', link: 'https://github.com', title: 'Github' },
-    { icon: 'envelope', link: 'mailto:example@example.com', title: '邮箱' },
+    { icon: 'gitee', link: 'https://gitee.com/your-username', title: 'Gitee' },
+    { icon: 'bilibili', link: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
     { icon: 'geo-alt', link: '#', title: '坐标：北京' },
-    { icon: 'person', link: '', title: '关于我' }
+    { icon: 'person', link: '/about', title: '关于我' }
 ])
 
 // 搜索文本
@@ -190,7 +191,7 @@ const tags = ref([
     { name: 'HTML', count: 4, type: 'danger' },
     { name: 'Node.js', count: 3, type: '' },
     { name: '前端', count: 10, type: 'success' },
-    { name: '后端', count: 7, type: 'info' }
+    { name: '1111', count: 7, type: 'info' }
 ])
 
 // 标签点击处理函数
