@@ -146,6 +146,13 @@ const tools = ref([
         icon: 'controller',
         path: '/game',
         status: { type: 'info', text: '计划中' }
+    },
+    {
+        id: 3,
+        name: '系统',
+        icon: 'kanban',
+        path: '/system',
+        status: { type: 'info', text: '开发中' }
     }
 ])
 

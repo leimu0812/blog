@@ -35,14 +35,8 @@
                     </div>
                 </template>
                 <div class="tags-content">
-                    <el-tag
-                        v-for="tag in tags"
-                        :key="tag.name"
-                        :type="tag.type"
-                        class="tag-item"
-                        effect="light"
-                        @click="handleTagClick(tag.name)"
-                    >
+                    <el-tag v-for="tag in tags" :key="tag.name" :type="tag.type" class="tag-item" effect="light"
+                        @click="handleTagClick(tag.name)">
                         {{ tag.name }}({{ tag.count }})
                     </el-tag>
                 </div>
@@ -87,11 +81,7 @@
                         <div class="article-info">
                             <div class="article-header">
                                 <h3 class="article-title">{{ article.title }}</h3>
-                                <el-tag v-if="article.isTop" 
-                                       size="small" 
-                                       effect="dark" 
-                                       type="danger"
-                                       class="top-tag">
+                                <el-tag v-if="article.isTop" size="small" effect="dark" type="danger" class="top-tag">
                                     <Icon name="top" :size="12" />
                                     置顶
                                 </el-tag>
@@ -117,9 +107,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Icon from '@/components/Icon.vue'
+
+import { getInfo } from '@/api/HomeView'
 
 const router = useRouter()
 
@@ -131,9 +123,9 @@ const info = ref({
         circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
     },
     type: [
-        { name: '文章', number: 25 },
-        { name: '分类', number: 12 },
-        { name: '标签', number: 36 }
+        { name: '文章', number: 0 },
+        { name: '分类', number: 0 },
+        { name: '标签', number: 0 }
     ]
 })
 
@@ -194,6 +186,19 @@ const tags = ref([
     { name: '1111', count: 7, type: 'info' }
 ])
 
+const getUserInfo = async () => {
+    try {
+        const res = await getInfo();
+        if (info.value && info.value.user) {
+            info.value.user.circleUrl = res.data.avatarUrl;
+            info.value.user.name = res.data.nickname;
+            info.value.user.motto = res.data.motto;
+        }
+    } catch (error) {
+        console.error('Failed to get user info:', error);
+    }
+};
+
 // 标签点击处理函数
 const handleTagClick = (tagName: string) => {
     // 这里可以添加标签点击后的处理逻辑，比如跳转到标签相关文章列表页
@@ -204,6 +209,10 @@ const handleTagClick = (tagName: string) => {
 const goToArticle = (id: number) => {
     router.push(`/article/${id}`)
 }
+
+onMounted(() => {
+    getUserInfo()
+})
 </script>
 
 <style scoped>
@@ -791,6 +800,7 @@ const goToArticle = (id: number) => {
 }
 
 @media (max-width: 480px) {
+
     /* 更小屏幕的特殊调整 */
     .user-avatar {
         width: 100px !important;

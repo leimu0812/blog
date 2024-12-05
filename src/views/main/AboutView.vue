@@ -8,15 +8,6 @@
                 </div>
                 <div class="profile-title">
                     <h1>{{ profile.name }}</h1>
-                    <!-- <p class="profile-subtitle">{{ profile.title }}</p> -->
-                    <!-- <div class="profile-tags">
-                        <el-tag 
-                            v-for="tag in profile.tags" 
-                            :key="tag"
-                            class="common-tag profile-tag">
-                            {{ tag }}
-                        </el-tag>
-                    </div> -->
                 </div>
             </div>
             <div class="profile-content">
@@ -110,10 +101,8 @@ import Icon from '@/components/Icon.vue'
 
 const profile = ref({
     name: '心如镜映月明',
-    title: '热爱生活，追求美好',
     avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     quote: 'The heart is like a mirror reflecting the moon .',
-    tags: ['00后', '程序员', '游戏玩家', '一个人'],
     socials: [
         { name: 'Gitee', icon: 'gitee', link: 'https://gitee.com/leimu0812' },
         { name: 'Github', icon: 'github', link: 'https://github.com/leimu0812' },
