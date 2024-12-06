@@ -4,13 +4,13 @@
             <el-card class="box-card-info" shadow="hover">
                 <div class="box-card-info-content">
                     <div class="avatar-wrapper">
-                        <el-avatar :size="120" :src="info.user.circleUrl" class="user-avatar" />
+                        <el-avatar :size="120" :src="userInfo.circleUrl" class="user-avatar" />
                     </div>
                     <div class="user-info">
-                        <h3 class="user-name">{{ info.user.name }}</h3>
-                        <p class="user-motto">{{ info.user.motto }}</p>
+                        <h3 class="user-name">{{ userInfo.name }}</h3>
+                        <p class="user-motto">{{ userInfo.motto }}</p>
                         <div class="social-links">
-                            <a v-for="(social, index) in socials" :key="index" :href="social.link" target="_blank"
+                            <a v-for="(social, index) in socials" :key="index" :href="social.url" target="_blank"
                                 class="social-item" :title="social.title">
                                 <Icon :name="social.icon" :size="16" />
                             </a>
@@ -20,7 +20,7 @@
                         <Icon name="arrow-repeat" :size="16" />
                     </el-divider>
                     <div class="stats-container">
-                        <div v-for="type in info.type" :key="type.name" class="stat-item">
+                        <div v-for="type in typeInfo" :key="type.name" class="stat-item">
                             <div class="stat-number">{{ type.number }}</div>
                             <div class="stat-name">{{ type.name }}</div>
                         </div>
@@ -35,7 +35,7 @@
                     </div>
                 </template>
                 <div class="tags-content">
-                    <el-tag v-for="tag in tags" :key="tag.name" :type="tag.type" class="tag-item" effect="light"
+                    <el-tag v-for="tag in tags" :key="tag.name" :type="tag.type" class="tag-item" effect="plain"
                         @click="handleTagClick(tag.name)">
                         {{ tag.name }}({{ tag.count }})
                     </el-tag>
@@ -102,6 +102,10 @@
                     </div>
                 </el-card>
             </div>
+            <div class="custom-pagination">
+                <el-pagination v-model:current-page="currentPage" :background="true" layout="prev, pager, next"
+                    :pager-count="5" :total="50" :page-size="10" @current-change="handlePageChange" />
+            </div>
         </el-col>
     </el-row>
 </template>
@@ -110,39 +114,45 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Icon from '@/components/Icon.vue'
-
-import { getInfo } from '@/api/HomeView'
+import { getInfo, getSocialLink, getTags } from '@/api/HomeView'
+import type {
+    SocialLink,
+    HotArticle,
+    Article,
+    Tag,
+    UserInfo,
+    TypeInfo
+} from '@/types/home'
 
 const router = useRouter()
 
 // 用户信息
-const info = ref({
-    user: {
-        name: '心如镜映月明',
-        motto: 'The heart is like a mirror reflecting the moon.',
-        circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
-    },
-    type: [
-        { name: '文章', number: 0 },
-        { name: '分类', number: 0 },
-        { name: '标签', number: 0 }
-    ]
+const userInfo = ref<UserInfo>({
+    name: '心如映月明',
+    motto: 'The heart is like a mirror reflecting the moon.',
+    circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 })
 
+const typeInfo = ref<TypeInfo[]>([
+    { name: '文章', number: 10 },
+    { name: '分类', number: 5 },
+    { name: '标签', number: 20 }
+])
+
 // 社交链接
-const socials = ref([
-    { icon: 'github', link: 'https://github.com', title: 'Github' },
-    { icon: 'gitee', link: 'https://gitee.com/your-username', title: 'Gitee' },
-    { icon: 'bilibili', link: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
-    { icon: 'geo-alt', link: '#', title: '坐标：北京' },
-    { icon: 'person', link: '/about', title: '关于我' }
+const socials = ref<SocialLink[]>([
+    { icon: 'github', url: 'https://github.com', title: 'Github' },
+    { icon: 'gitee', url: 'https://gitee.com/your-username', title: 'Gitee' },
+    { icon: 'bilibili', url: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
+    { icon: 'geo-alt', url: '#', title: '坐标：北京' },
+    { icon: 'person', url: '/about', title: '关于我' }
 ])
 
 // 搜索文本
 const searchText = ref('')
 
-// 热门文章
-const hotArticles = ref([
+// 热门文
+const hotArticles = ref<HotArticle[]>([
     {
         id: 1,
         title: '热门测试文章',
@@ -151,11 +161,11 @@ const hotArticles = ref([
 ])
 
 // 文章列表
-const articles = ref([
+const articles = ref<Article[]>([
     {
         id: 1,
         title: '测试文章标题',
-        category: '测试分类',
+        category: '测试分��',
         date: '2024-03-21',
         views: 100,
         summary: '这是一篇测试文章的摘要内容...',
@@ -174,8 +184,8 @@ const articles = ref([
     }
 ])
 
-// 添加标签数据
-const tags = ref([
+// 标签数据
+const tags = ref<Tag[]>([
     { name: 'Vue', count: 12, type: '' },
     { name: 'JavaScript', count: 8, type: 'success' },
     { name: 'TypeScript', count: 6, type: 'info' },
@@ -186,13 +196,63 @@ const tags = ref([
     { name: '1111', count: 7, type: 'info' }
 ])
 
+// 简化分页相关的数据
+const currentPage = ref(1)
+
+// 简化分页改变事件处理函数
+const handlePageChange = (page: number) => {
+    currentPage.value = page
+    // 这里可以调用获取文章列表的方法
+    getArticleList()
+}
+
+// 简化获取文章列表方法
+const getArticleList = async () => {
+    try {
+        // 这里添加获取文章列表的 API 调用
+        // const res = await getArticles(currentPage.value);
+        // if (res.code === 200) {
+        //     articles.value = res.data;
+        // }
+        console.log('当前页码：', currentPage.value)
+    } catch (error) {
+        console.error('Failed to get articles:', error);
+    }
+};
+
+// 获取标签信息
+const getTag = async () => {
+    try {
+        const res = await getTags();
+        console.log(res);
+        if (res.code === 200 && res.data) {
+            tags.value = res.data;
+        }
+    } catch (error) {
+        console.error('Failed to get tags:', error);
+    }
+};
+
+// 获取社交链接信息
+const getSocialLinks = async () => {
+    try {
+        const res = await getSocialLink();
+        if (res.code === 200 && res.data) {
+            socials.value = res.data;
+        }
+    } catch (error) {
+        console.error('Failed to get social links:', error);
+    }
+};
+
+// 获取个人信息
 const getUserInfo = async () => {
     try {
         const res = await getInfo();
-        if (info.value && info.value.user) {
-            info.value.user.circleUrl = res.data.avatarUrl;
-            info.value.user.name = res.data.nickname;
-            info.value.user.motto = res.data.motto;
+        if (res.code === 200 && res.data) {
+            userInfo.value.circleUrl = res.data.avatarUrl;
+            userInfo.value.name = res.data.nickname;
+            userInfo.value.motto = res.data.motto;
         }
     } catch (error) {
         console.error('Failed to get user info:', error);
@@ -201,7 +261,7 @@ const getUserInfo = async () => {
 
 // 标签点击处理函数
 const handleTagClick = (tagName: string) => {
-    // 这里可以添加标签点击后的处理逻辑，比如跳转到标签相关文章列表页
+    // 这可以添加标签点击的处理逻辑，比如跳转到标签相关文章列表页
     console.log('Tag clicked:', tagName)
 }
 
@@ -212,9 +272,11 @@ const goToArticle = (id: number) => {
 
 onMounted(() => {
     getUserInfo()
+    getSocialLinks()
+    getArticleList()
+    getTag()
 })
 </script>
-
 <style scoped>
 .box-card-info {
     background: rgba(255, 255, 255, 0.9);
@@ -688,7 +750,7 @@ onMounted(() => {
     }
 }
 
-/* 添加标签相关样式 */
+/* 修改标签相关样式 */
 .tags-content {
     display: flex;
     flex-wrap: wrap;
@@ -700,6 +762,34 @@ onMounted(() => {
     cursor: pointer;
     transition: all 0.3s ease;
     margin: 0;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* 修改标签类型的样式 */
+.tag-item.el-tag--info {
+    background-color: rgba(144, 147, 153, 0.1);
+    border-color: rgba(144, 147, 153, 0.2);
+    color: #909399;
+}
+
+.tag-item.el-tag--success {
+    background-color: rgba(103, 194, 58, 0.1);
+    border-color: rgba(103, 194, 58, 0.2);
+    color: #67c23a;
+}
+
+.tag-item.el-tag--warning {
+    background-color: rgba(230, 162, 60, 0.1);
+    border-color: rgba(230, 162, 60, 0.2);
+    color: #e6a23c;
+}
+
+.tag-item.el-tag--danger {
+    background-color: rgba(245, 108, 108, 0.1);
+    border-color: rgba(245, 108, 108, 0.2);
+    color: #f56c6c;
 }
 
 .tag-item:hover {
@@ -707,12 +797,40 @@ onMounted(() => {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* 标签hover效果 */
+.tag-item.el-tag--info:hover {
+    background-color: #909399;
+    color: white;
+}
+
+.tag-item.el-tag--success:hover {
+    background-color: #67c23a;
+    color: white;
+}
+
+.tag-item.el-tag--warning:hover {
+    background-color: #e6a23c;
+    color: white;
+}
+
+.tag-item.el-tag--danger:hover {
+    background-color: #f56c6c;
+    color: white;
+}
+
+/* 默认标签hover效果 */
+.tag-item:not(.el-tag--info):not(.el-tag--success):not(.el-tag--warning):not(.el-tag--danger):hover {
+    background-color: #409EFF;
+    color: white;
+    border-color: #409EFF;
+}
+
 @media (max-width: 768px) {
     .el-row {
         margin: 0 !important;
     }
 
-    /* 调整卡片间距 */
+    /* 调整卡距 */
     .box-card-info,
     .box-card-info-tags,
     .article-card {
@@ -836,7 +954,7 @@ onMounted(() => {
     }
 }
 
-/* 修复栅格间距问题 */
+/* 修复栅间距问题 */
 :deep(.el-row--flex) {
     margin: 0 !important;
     width: 100%;
