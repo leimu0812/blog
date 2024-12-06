@@ -8,7 +8,7 @@ export interface UserInfo {
 // 数量信息相关
 export interface TypeInfo {
   name: string;
-  number: number;
+  value: number;
 }
 
 // 社交链接相关

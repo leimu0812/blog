@@ -21,7 +21,7 @@
                     </el-divider>
                     <div class="stats-container">
                         <div v-for="type in typeInfo" :key="type.name" class="stat-item">
-                            <div class="stat-number">{{ type.number }}</div>
+                            <div class="stat-number">{{ type.value }}</div>
                             <div class="stat-name">{{ type.name }}</div>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Icon from '@/components/Icon.vue'
-import { getInfo, getSocialLink, getTags } from '@/api/HomeView'
+import { getInfo, getSocialLink, getTags, getSiteStats } from '@/api/HomeView'
 import type {
     SocialLink,
     HotArticle,
@@ -134,9 +134,11 @@ const userInfo = ref<UserInfo>({
 })
 
 const typeInfo = ref<TypeInfo[]>([
-    { name: '文章', number: 10 },
-    { name: '分类', number: 5 },
-    { name: '标签', number: 20 }
+    { name: '文章', value: 0 },
+    { name: '分类', value: 0 },
+    { name: '标签', value: 0 },
+    { name: '想法', value: 0 },
+    { name: '记录', value: 0 }
 ])
 
 // 社交链接
@@ -220,11 +222,22 @@ const getArticleList = async () => {
     }
 };
 
+// 获取站点统计信息
+const getSiteStat = async () => {
+    try {
+        const res = await getSiteStats();
+        if (res.code === 200 && res.data) {
+            typeInfo.value = res.data;
+        }
+    } catch (error) {
+        console.error('Failed to get site stats:', error);
+    }
+};
+
 // 获取标签信息
 const getTag = async () => {
     try {
         const res = await getTags();
-        console.log(res);
         if (res.code === 200 && res.data) {
             tags.value = res.data;
         }
@@ -275,6 +288,7 @@ onMounted(() => {
     getSocialLinks()
     getArticleList()
     getTag()
+    getSiteStat()
 })
 </script>
 <style scoped>

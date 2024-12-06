@@ -1,4 +1,4 @@
-import type { SocialLink, Tag } from "@/types/home";
+import type { SocialLink, Tag, TypeInfo } from "@/types/home";
 
 // 用户信息响应类型
 export interface UserInfoVO {
@@ -23,4 +23,10 @@ export interface TagsVO {
   code: number;
   msg: string;
   data: Tag[];
+}
+
+export interface TypeInfoVO {
+  code: number;
+  msg: string;
+  data: TypeInfo[];
 }
