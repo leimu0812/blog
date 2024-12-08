@@ -1,16 +1,11 @@
 <template>
     <div class="icon-wrapper" :style="wrapperStyle">
         <i v-if="!isCustomIcon" :class="`bi bi-${props.name}`" :style="iconStyle"></i>
-        
-        <img v-else-if="name === 'bilibili'" 
-             src="@/assets/icons/bilibili.svg" 
-             :style="iconStyle" 
-             alt="bilibili" />
-             
-        <img v-else-if="name === 'gitee'" 
-             src="@/assets/icons/gitee.svg" 
-             :style="iconStyle" 
-             alt="gitee" />
+
+        <img v-else-if="name === 'bilibili'" src="@/assets/icons/bilibili.svg" :style="iconStyle" alt="bilibili" />
+
+        <img v-else-if="name === 'gitee'" src="@/assets/icons/gitee.svg" :style="iconStyle" alt="gitee" />
+        <img v-else-if="name === 'top'" src="@/assets/icons/top.svg" :style="iconStyle" alt="top" />
     </div>
 </template>
 
@@ -33,7 +28,7 @@ const props = defineProps({
 })
 
 const isCustomIcon = computed(() => {
-    return ['bilibili', 'gitee'].includes(props.name)
+    return ['bilibili', 'gitee', 'top'].includes(props.name)
 })
 
 const iconStyle = computed(() => ({
@@ -61,4 +56,4 @@ const wrapperStyle = computed(() => ({
     height: 100%;
     object-fit: contain;
 }
-</style> 
+</style>

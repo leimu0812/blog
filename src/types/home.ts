@@ -1,8 +1,8 @@
 // 用户信息相关
 export interface UserInfo {
-  name: string;
+  nickname: string;
   motto: string;
-  circleUrl: string;
+  avatarUrl: string;
 }
 
 // 数量信息相关
@@ -24,16 +24,27 @@ export interface HotArticle {
   title: string;
   views: number;
 }
-// 文章相关
-export interface Article {
-  id: number;
+export interface Articles {
+  id: string | number;
   title: string;
-  category: string;
-  date: string;
-  views: number;
   summary: string;
+  content: string;
   coverImg: string;
-  isTop: boolean;
+  coverImgUrl: string;
+  category: string;
+  views: number;
+  isTop: number;
+  status: string;
+  publishTime: string;
+  createdAt: string;
+  updatedAt: string;
+  tags: string[];
+}
+
+export interface ArticleQueryParams {
+  query?: string;
+  pageNum: number;
+  pageSize: number;
 }
 
 // 标签相关

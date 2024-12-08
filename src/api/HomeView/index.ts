@@ -4,6 +4,8 @@ import type {
   SocialLinkVO,
   TagsVO,
   TypeInfoVO,
+  ArticleVO,
+  ArticleQueryParams,
 } from "@/api/HomeView/types";
 
 export async function getInfo(): Promise<UserInfoVO> {
@@ -20,4 +22,8 @@ export const getTags = (): Promise<TagsVO> => {
 
 export const getSiteStats = (): Promise<TypeInfoVO> => {
   return request.get("/siteStats");
+};
+
+export const getArticleList = (params: ArticleQueryParams): Promise<ArticleVO> => {
+  return request.get("/articleList", { params });
 };

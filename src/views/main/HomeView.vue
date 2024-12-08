@@ -4,10 +4,10 @@
             <el-card class="box-card-info" shadow="hover">
                 <div class="box-card-info-content">
                     <div class="avatar-wrapper">
-                        <el-avatar :size="120" :src="userInfo.circleUrl" class="user-avatar" />
+                        <el-avatar :size="120" :src="userInfo.avatarUrl" class="user-avatar" />
                     </div>
                     <div class="user-info">
-                        <h3 class="user-name">{{ userInfo.name }}</h3>
+                        <h3 class="user-name">{{ userInfo.nickname }}</h3>
                         <p class="user-motto">{{ userInfo.motto }}</p>
                         <div class="social-links">
                             <a v-for="(social, index) in socials" :key="index" :href="social.url" target="_blank"
@@ -59,21 +59,21 @@
         </el-col>
 
         <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
-            <el-input class="search-input" v-model="searchText" placeholder="搜索文章...">
+            <el-input class="search-input" v-model="queryParams.query" placeholder="搜索文章..."
+                @keyup.enter="handleSearch">
                 <template #prefix>
                     <Icon name="search" :size="16" />
                 </template>
             </el-input>
             <div class="article-list">
                 <el-card v-for="article in articles" :key="article.id" class="article-card" shadow="hover"
-                    @click="goToArticle(article.id)">
+                    @click="goToArticle(Number(article.id))">
                     <div class="article-content">
                         <div class="article-cover">
-                            <el-image :src="article.coverImg" fit="cover" loading="lazy"
-                                :preview-src-list="[article.coverImg]">
+                            <el-image :src="article.coverImgUrl" fit="cover" loading="lazy">
                                 <template #error>
                                     <div class="image-slot">
-                                        <Icon name="image" :size="14" />
+                                        <Icon name="image" :size="20" />
                                     </div>
                                 </template>
                             </el-image>
@@ -81,20 +81,27 @@
                         <div class="article-info">
                             <div class="article-header">
                                 <h3 class="article-title">{{ article.title }}</h3>
-                                <el-tag v-if="article.isTop" size="small" effect="dark" type="danger" class="top-tag">
-                                    <Icon name="top" :size="12" />
+                                <el-tag v-if="article.isTop === 1" size="small" effect="dark" type="danger"
+                                    class="top-tag">
+                                    <!-- <Icon name="top" :size="12" /> -->
+                                    <el-icon>
+                                        <Top />
+                                    </el-icon>
                                     置顶
                                 </el-tag>
                             </div>
                             <p class="article-summary">{{ article.summary }}</p>
                             <div class="article-meta">
-                                <el-tag size="small" effect="plain">{{ article.category }}</el-tag>
+                                <el-tag size="small" effect="plain" class="category-tag">
+                                    <Icon name="folder" :size="14" class="meta-icon" />
+                                    {{ article.category }}
+                                </el-tag>
                                 <span class="meta-item">
-                                    <Icon name="calendar3" :size="14" />
-                                    {{ article.date }}
+                                    <Icon name="calendar3" :size="14" class="meta-icon" />
+                                    {{ article.publishTime }}
                                 </span>
                                 <span class="meta-item">
-                                    <Icon name="eye" :size="14" />
+                                    <Icon name="eye" :size="14" class="meta-icon" />
                                     {{ article.views }}
                                 </span>
                             </div>
@@ -103,8 +110,8 @@
                 </el-card>
             </div>
             <div class="custom-pagination">
-                <el-pagination v-model:current-page="currentPage" :background="true" layout="prev, pager, next"
-                    :pager-count="5" :total="50" :page-size="10" @current-change="handlePageChange" />
+                <el-pagination v-model:current-page="queryParams.pageNum" :total="total" :page-size="10"
+                    layout="prev, pager, next" background @current-change="handlePageChange" />
             </div>
         </el-col>
     </el-row>
@@ -114,44 +121,42 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Icon from '@/components/Icon.vue'
-import { getInfo, getSocialLink, getTags, getSiteStats } from '@/api/HomeView'
+import { getInfo, getSocialLink, getTags, getSiteStats, getArticleList } from '@/api/HomeView'
 import type {
     SocialLink,
     HotArticle,
-    Article,
+    Articles,
     Tag,
     UserInfo,
-    TypeInfo
+    TypeInfo,
+    ArticleQueryParams
 } from '@/types/home'
 
 const router = useRouter()
 
 // 用户信息
 const userInfo = ref<UserInfo>({
-    name: '心如映月明',
+    nickname: '心如映月明',
     motto: 'The heart is like a mirror reflecting the moon.',
-    circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+    avatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 })
 
 const typeInfo = ref<TypeInfo[]>([
-    { name: '文章', value: 0 },
-    { name: '分类', value: 0 },
-    { name: '标签', value: 0 },
-    { name: '想法', value: 0 },
-    { name: '记录', value: 0 }
+    // { name: '文章', value: 0 },
+    // { name: '分类', value: 0 },
+    // { name: '��签', value: 0 },
+    // { name: '想法', value: 0 },
+    // { name: '记录', value: 0 }
 ])
 
 // 社交链接
 const socials = ref<SocialLink[]>([
-    { icon: 'github', url: 'https://github.com', title: 'Github' },
-    { icon: 'gitee', url: 'https://gitee.com/your-username', title: 'Gitee' },
-    { icon: 'bilibili', url: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
-    { icon: 'geo-alt', url: '#', title: '坐标：北京' },
-    { icon: 'person', url: '/about', title: '关于我' }
+    // { icon: 'github', url: 'https://github.com', title: 'Github' },
+    // { icon: 'gitee', url: 'https://gitee.com/your-username', title: 'Gitee' },
+    // { icon: 'bilibili', url: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
+    // { icon: 'geo-alt', url: '#', title: '坐标：北京' },
+    // { icon: 'person', url: '/about', title: '关于我' }
 ])
-
-// 搜索文本
-const searchText = ref('')
 
 // 热门文
 const hotArticles = ref<HotArticle[]>([
@@ -163,63 +168,74 @@ const hotArticles = ref<HotArticle[]>([
 ])
 
 // 文章列表
-const articles = ref<Article[]>([
+const articles = ref<Articles[]>([
     {
         id: 1,
         title: '测试文章标题',
-        category: '测试分��',
-        date: '2024-03-21',
-        views: 100,
         summary: '这是一篇测试文章的摘要内容...',
-        coverImg: 'https://example.com/image.jpg',
-        isTop: true
-    },
-    {
-        id: 2,
-        title: '测试文章标题',
+        content: 'string',
+        coverImg: 'string',
+        coverImgUrl: 'string',
         category: '测试分类',
-        date: '2024-03-21',
-        views: 100,
-        summary: '这是一篇测试文章的摘要内容...',
-        coverImg: 'https://example.com/image.jpg',
-        isTop: false
+        views: 0,
+        isTop: 1,
+        status: 'string',
+        publishTime: '2024-03-21',
+        createdAt: 'string',
+        updatedAt: 'string',
+        tags: ['string']
     }
 ])
 
 // 标签数据
 const tags = ref<Tag[]>([
-    { name: 'Vue', count: 12, type: '' },
-    { name: 'JavaScript', count: 8, type: 'success' },
-    { name: 'TypeScript', count: 6, type: 'info' },
-    { name: 'CSS', count: 5, type: 'warning' },
-    { name: 'HTML', count: 4, type: 'danger' },
-    { name: 'Node.js', count: 3, type: '' },
-    { name: '前端', count: 10, type: 'success' },
-    { name: '1111', count: 7, type: 'info' }
+    // { name: 'Vue', count: 12, type: '' },
 ])
 
-// 简化分页相关的数据
-const currentPage = ref(1)
+// 分页相关参数
+const queryParams = ref<ArticleQueryParams>({
+    pageNum: 1,
+    pageSize: 6,
+    query: ''
+});
 
-// 简化分页改变事件处理函数
-const handlePageChange = (page: number) => {
-    currentPage.value = page
-    // 这里可以调用获取文章列表的方法
-    getArticleList()
+// 总数据量
+const total = ref(0);
+
+// 标签点击处理函数
+const handleTagClick = (tagName: string) => {
+    // 这可以添加标签点击的处理逻辑，比如跳转到标签相关文章列表页
+    console.log('Tag clicked:', tagName)
 }
 
-// 简化获取文章列表方法
-const getArticleList = async () => {
+// 跳转到文章详情
+const goToArticle = (id: number) => {
+    router.push(`/article/${id}`)
+}
+
+// 修改页码
+const handlePageChange = (page: number) => {
+    queryParams.value.pageNum = page;
+    getArticles();
+};
+
+// 获取文章列表
+const getArticles = async () => {
     try {
-        // 这里添加获取文章列表的 API 调用
-        // const res = await getArticles(currentPage.value);
-        // if (res.code === 200) {
-        //     articles.value = res.data;
-        // }
-        console.log('当前页码：', currentPage.value)
+        const res = await getArticleList(queryParams.value);
+        console.log(res.data);
+        articles.value = res.data.rows;
+        total.value = res.data.total;
     } catch (error) {
-        console.error('Failed to get articles:', error);
+        console.error('获取文章列表失败:', error);
     }
+};
+
+// 搜索文章
+const handleSearch = () => {
+    queryParams.value.query = queryParams.value.query;
+    queryParams.value.pageNum = 1; // 搜索时重置到第一页
+    getArticles();
 };
 
 // 获取站点统计信息
@@ -234,7 +250,7 @@ const getSiteStat = async () => {
     }
 };
 
-// 获取标签信息
+// ���取标签息
 const getTag = async () => {
     try {
         const res = await getTags();
@@ -263,34 +279,22 @@ const getUserInfo = async () => {
     try {
         const res = await getInfo();
         if (res.code === 200 && res.data) {
-            userInfo.value.circleUrl = res.data.avatarUrl;
-            userInfo.value.name = res.data.nickname;
-            userInfo.value.motto = res.data.motto;
+            userInfo.value = res.data;
         }
     } catch (error) {
         console.error('Failed to get user info:', error);
     }
 };
 
-// 标签点击处理函数
-const handleTagClick = (tagName: string) => {
-    // 这可以添加标签点击的处理逻辑，比如跳转到标签相关文章列表页
-    console.log('Tag clicked:', tagName)
-}
-
-// 跳转到文章详情
-const goToArticle = (id: number) => {
-    router.push(`/article/${id}`)
-}
-
 onMounted(() => {
     getUserInfo()
     getSocialLinks()
-    getArticleList()
+    getArticles()
     getTag()
     getSiteStat()
 })
 </script>
+
 <style scoped>
 .box-card-info {
     background: rgba(255, 255, 255, 0.9);
@@ -458,18 +462,19 @@ onMounted(() => {
     margin-bottom: 20px;
 }
 
-.article-card {
+.article-list {
     margin-bottom: 20px;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: transform 0.3s;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
+}
+
+.article-card {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
 .article-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .article-content {
@@ -479,9 +484,9 @@ onMounted(() => {
 
 .article-cover {
     flex: 0 0 200px;
-    height: 150px;
+    height: 140px;
+    border-radius: 6px;
     overflow: hidden;
-    border-radius: 8px;
 }
 
 .article-cover .el-image {
@@ -491,7 +496,7 @@ onMounted(() => {
 }
 
 .article-card:hover .article-cover .el-image {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .image-slot {
@@ -510,30 +515,37 @@ onMounted(() => {
     flex-direction: column;
 }
 
+.article-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
 .article-title {
-    font-size: 1.4rem;
+    flex: 1;
+    font-size: 1.25rem;
     color: #303133;
-    margin: 0 0 10px 0;
+    margin: 0;
     font-weight: 600;
+    line-height: 1.4;
 }
 
 .article-summary {
     color: #606266;
     font-size: 0.95rem;
     line-height: 1.6;
-    margin: 0 0 auto 0;
+    margin: 0 0 auto;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
     overflow: hidden;
 }
 
 .article-meta {
-    margin-top: 15px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
     color: #909399;
     font-size: 0.9rem;
 }
@@ -544,14 +556,46 @@ onMounted(() => {
     gap: 4px;
 }
 
-.meta-item .el-icon {
-    font-size: 0.9rem;
+.meta-icon {
+    margin-right: 2px;
 }
 
-.el-tag {
-    background-color: rgba(64, 158, 255, 0.1);
-    border-color: rgba(64, 158, 255, 0.2);
-    color: #409EFF;
+.category-tag {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 24px;
+}
+
+.top-tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px;
+    height: 22px;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .article-content {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .article-cover {
+        flex: none;
+        width: 100%;
+        height: 180px;
+    }
+
+    .article-title {
+        font-size: 1.1rem;
+    }
+
+    .article-meta {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
 }
 
 .el-row {

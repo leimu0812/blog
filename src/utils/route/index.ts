@@ -70,6 +70,17 @@ const routes = [
     name: "404",
     component: NoPage,
   },
+  // 在路由配置中添加
+  {
+    path: "/500",
+    component: () => import("@/views/system/500.vue"),
+    hidden: true,
+  },
+  {
+    path: "/400",
+    component: () => import("@/views/system/400.vue"),
+    hidden: true,
+  },
 ];
 
 const router = createRouter({
