@@ -8,22 +8,25 @@ import type {
   ArticleQueryParams,
 } from "@/api/HomeView/types";
 
-export async function getInfo(): Promise<UserInfoVO> {
-  return request.get("/info");
+export async function getInfo() {
+  return request.get<UserInfoVO>("/info");
 }
 
-export const getSocialLink = (): Promise<SocialLinkVO> => {
-  return request.get("/socialLink");
-};
+export async function getSocialLink() {
+  return request.get<SocialLinkVO>("/socialLink");
+}
 
-export const getTags = (): Promise<TagsVO> => {
-  return request.get("/tags");
-};
+export async function getTags() {
+  return request.get<TagsVO>("/tags");
+}
 
-export const getSiteStats = (): Promise<TypeInfoVO> => {
-  return request.get("/siteStats");
-};
+export async function getSiteStats() {
+  return request.get<TypeInfoVO>("/siteStats");
+}
 
-export const getArticleList = (params: ArticleQueryParams): Promise<ArticleVO> => {
-  return request.get("/articleList", { params });
-};
+export async function getArticleList(params: ArticleQueryParams) {
+  const { pageNum, pageSize, title } = params;
+  return request.get<ArticleVO>(
+    `/articleList?pageNum=${pageNum}&pageSize=${pageSize}&title=${title}`
+  );
+}

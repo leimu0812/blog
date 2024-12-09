@@ -59,7 +59,7 @@
         </el-col>
 
         <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
-            <el-input class="search-input" v-model="queryParams.query" placeholder="搜索文章..."
+            <el-input class="search-input" v-model="queryParams.title" placeholder="搜索文章..."
                 @keyup.enter="handleSearch">
                 <template #prefix>
                     <Icon name="search" :size="16" />
@@ -67,7 +67,7 @@
             </el-input>
             <div class="article-list">
                 <el-card v-for="article in articles" :key="article.id" class="article-card" shadow="hover"
-                    @click="goToArticle(Number(article.id))">
+                    @click="goToArticle(article.id)">
                     <div class="article-content">
                         <div class="article-cover">
                             <el-image :src="article.coverImgUrl" fit="cover" loading="lazy">
@@ -83,7 +83,6 @@
                                 <h3 class="article-title">{{ article.title }}</h3>
                                 <el-tag v-if="article.isTop === 1" size="small" effect="dark" type="danger"
                                     class="top-tag">
-                                    <!-- <Icon name="top" :size="12" /> -->
                                     <el-icon>
                                         <Top />
                                     </el-icon>
@@ -110,8 +109,15 @@
                 </el-card>
             </div>
             <div class="custom-pagination">
-                <el-pagination v-model:current-page="queryParams.pageNum" :total="total" :page-size="10"
-                    layout="prev, pager, next" background @current-change="handlePageChange" />
+                <el-pagination 
+                    v-model:current-page="queryParams.pageNum" 
+                    :total="total"
+                    :page-size="queryParams.pageSize" 
+                    layout="prev, pager, next" 
+                    background
+                    @current-change="handlePageChange" 
+                    class="pagination-inner" 
+                />
             </div>
         </el-col>
     </el-row>
@@ -140,25 +146,41 @@ const userInfo = ref<UserInfo>({
     motto: 'The heart is like a mirror reflecting the moon.',
     avatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
 })
-
-const typeInfo = ref<TypeInfo[]>([
-    // { name: '文章', value: 0 },
-    // { name: '分类', value: 0 },
-    // { name: '��签', value: 0 },
-    // { name: '想法', value: 0 },
-    // { name: '记录', value: 0 }
-])
-
 // 社交链接
-const socials = ref<SocialLink[]>([
-    // { icon: 'github', url: 'https://github.com', title: 'Github' },
-    // { icon: 'gitee', url: 'https://gitee.com/your-username', title: 'Gitee' },
-    // { icon: 'bilibili', url: 'https://space.bilibili.com/179362285', title: 'Bilibili' },
-    // { icon: 'geo-alt', url: '#', title: '坐标：北京' },
-    // { icon: 'person', url: '/about', title: '关于我' }
+const socials = ref<SocialLink[]>([])
+// 标签数据
+const tags = ref<Tag[]>([])
+// 站点统计
+const typeInfo = ref<TypeInfo[]>([])
+// 数量
+const total = ref(0);
+// 分页相关参数
+const queryParams = ref<ArticleQueryParams>({
+    pageNum: 1,
+    pageSize: 6,
+    title: ''
+});
+// 文章列表
+const articles = ref<Articles[]>([
+    // {
+    //     id: 1,
+    //     title: '测试文章标题',
+    //     summary: '这是一篇测试文章的摘要内容...',
+    //     content: 'string',
+    //     coverImg: 'string',
+    //     coverImgUrl: 'string',
+    //     category: '测试分类',
+    //     views: 0,
+    //     isTop: 1,
+    //     status: 'string',
+    //     publishTime: '2024-03-21',
+    //     createdAt: 'string',
+    //     updatedAt: 'string',
+    //     tags: ['string']
+    // }
 ])
 
-// 热门文
+// 热门文章
 const hotArticles = ref<HotArticle[]>([
     {
         id: 1,
@@ -167,40 +189,7 @@ const hotArticles = ref<HotArticle[]>([
     }
 ])
 
-// 文章列表
-const articles = ref<Articles[]>([
-    {
-        id: 1,
-        title: '测试文章标题',
-        summary: '这是一篇测试文章的摘要内容...',
-        content: 'string',
-        coverImg: 'string',
-        coverImgUrl: 'string',
-        category: '测试分类',
-        views: 0,
-        isTop: 1,
-        status: 'string',
-        publishTime: '2024-03-21',
-        createdAt: 'string',
-        updatedAt: 'string',
-        tags: ['string']
-    }
-])
 
-// 标签数据
-const tags = ref<Tag[]>([
-    // { name: 'Vue', count: 12, type: '' },
-])
-
-// 分页相关参数
-const queryParams = ref<ArticleQueryParams>({
-    pageNum: 1,
-    pageSize: 6,
-    query: ''
-});
-
-// 总数据量
-const total = ref(0);
 
 // 标签点击处理函数
 const handleTagClick = (tagName: string) => {
@@ -209,33 +198,34 @@ const handleTagClick = (tagName: string) => {
 }
 
 // 跳转到文章详情
-const goToArticle = (id: number) => {
+const goToArticle = (id: number | string) => {
     router.push(`/article/${id}`)
 }
 
+// 搜索文章
+const handleSearch = async () => {
+    queryParams.value.pageNum = 1; // 搜索时重置到第一页
+    await getArticles();
+};
+
 // 修改页码
-const handlePageChange = (page: number) => {
+const handlePageChange = async (page: number) => {
     queryParams.value.pageNum = page;
-    getArticles();
+    await getArticles();
 };
 
 // 获取文章列表
 const getArticles = async () => {
     try {
         const res = await getArticleList(queryParams.value);
-        console.log(res.data);
-        articles.value = res.data.rows;
-        total.value = res.data.total;
+        console.log('接收响应:', res);
+        if (res.code === 200) {
+            articles.value = res.data.rows;
+            total.value = res.data.total;
+        }
     } catch (error) {
         console.error('获取文章列表失败:', error);
     }
-};
-
-// 搜索文章
-const handleSearch = () => {
-    queryParams.value.query = queryParams.value.query;
-    queryParams.value.pageNum = 1; // 搜索时重置到第一页
-    getArticles();
 };
 
 // 获取站点统计信息
@@ -246,11 +236,11 @@ const getSiteStat = async () => {
             typeInfo.value = res.data;
         }
     } catch (error) {
-        console.error('Failed to get site stats:', error);
+        console.error('获取站点统计失败:', error);
     }
 };
 
-// ���取标签息
+// 获取标签信息
 const getTag = async () => {
     try {
         const res = await getTags();
@@ -258,7 +248,7 @@ const getTag = async () => {
             tags.value = res.data;
         }
     } catch (error) {
-        console.error('Failed to get tags:', error);
+        console.error('获取标签失败:', error);
     }
 };
 
@@ -270,7 +260,7 @@ const getSocialLinks = async () => {
             socials.value = res.data;
         }
     } catch (error) {
-        console.error('Failed to get social links:', error);
+        console.error('获取社交链接失败:', error);
     }
 };
 
@@ -282,16 +272,16 @@ const getUserInfo = async () => {
             userInfo.value = res.data;
         }
     } catch (error) {
-        console.error('Failed to get user info:', error);
+        console.error('获取用户信息失败:', error);
     }
 };
 
 onMounted(() => {
     getUserInfo()
     getSocialLinks()
-    getArticles()
     getTag()
     getSiteStat()
+    getArticles()
 })
 </script>
 
@@ -611,65 +601,73 @@ onMounted(() => {
 }
 
 .custom-pagination {
-    margin-top: 40px;
-    margin-bottom: 20px;
+    margin: 40px 0;
     display: flex;
     justify-content: center;
 }
 
-:deep(.el-pagination.is-background) {
-    padding: 10px 20px;
-    border-radius: 50px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+.pagination-inner {
+    padding: 6px 12px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(8px);
 }
 
-:deep(.el-pagination.is-background:hover) {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    background: rgba(255, 255, 255, 0.9);
+:deep(.el-pagination.is-background) {
+    --el-pagination-button-bg-color: transparent;
 }
 
 :deep(.el-pagination.is-background .el-pager li) {
-    margin: 0 5px;
-    min-width: 40px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 50%;
-    font-size: 16px;
+    margin: 0 2px;
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 15px;
+    font-size: 14px;
     font-weight: 500;
+    color: var(--el-text-color-regular);
     transition: all 0.3s ease;
-    background-color: transparent;
+    border: 1px solid transparent;
 }
 
 :deep(.el-pagination.is-background .el-pager li:not(.is-disabled):hover) {
-    transform: translateY(-2px);
-    background-color: rgba(64, 158, 255, 0.1);
-    color: #409EFF;
+    border-color: var(--el-color-primary);
+    color: var(--el-color-primary);
+    background-color: transparent;
 }
 
 :deep(.el-pagination.is-background .el-pager li.is-active) {
-    background-color: #409EFF;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+    background-color: var(--el-color-primary);
+    color: white;
 }
 
 :deep(.el-pagination.is-background .btn-prev),
 :deep(.el-pagination.is-background .btn-next) {
-    min-width: 40px;
-    height: 40px;
-    line-height: 40px;
-    border-radius: 50%;
-    margin: 0 5px;
-    transition: all 0.3s ease;
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 15px;
+    margin: 0 2px;
+    color: var(--el-text-color-regular);
     background-color: transparent;
+    border: 1px solid transparent;
 }
 
 :deep(.el-pagination.is-background .btn-prev:hover),
 :deep(.el-pagination.is-background .btn-next:hover) {
-    transform: translateY(-2px);
-    background-color: rgba(64, 158, 255, 0.1);
-    color: #409EFF;
+    border-color: var(--el-color-primary);
+    color: var(--el-color-primary);
+}
+
+@media (max-width: 768px) {
+    .custom-pagination {
+        margin: 30px 0;
+    }
+    
+    .pagination-inner {
+        padding: 4px 8px;
+    }
 }
 
 .hot-articles {

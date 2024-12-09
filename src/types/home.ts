@@ -42,7 +42,7 @@ export interface Articles {
 }
 
 export interface ArticleQueryParams {
-  query?: string;
+  title?: string;
   pageNum: number;
   pageSize: number;
 }

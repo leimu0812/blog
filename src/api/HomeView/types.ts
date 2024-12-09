@@ -1,14 +1,16 @@
-import type { SocialLink, Tag, TypeInfo, Articles } from "@/types/home";
+import type {
+  UserInfo,
+  SocialLink,
+  Tag,
+  TypeInfo,
+  Articles,
+} from "@/types/home";
 
 // 用户信息响应类型
 export interface UserInfoVO {
   code: number;
   msg: string;
-  data: {
-    avatarUrl: string;
-    nickname: string;
-    motto: string;
-  };
+  data: UserInfo;
 }
 
 // 社交链接响应类型
@@ -32,7 +34,7 @@ export interface TypeInfoVO {
 }
 
 export interface ArticleQueryParams {
-  query?: string;
+  title?: string;
   pageNum: number;
   pageSize: number;
 }

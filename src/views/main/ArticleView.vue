@@ -33,12 +33,7 @@
             <div class="article-tags">
                 <Icon name="tags" :size="14" />
                 <div class="tags-list">
-                    <el-tag 
-                        v-for="tag in article.tags" 
-                        :key="tag"
-                        size="small"
-                        class="common-tag"
-                        effect="plain">
+                    <el-tag v-for="tag in article.tags" :key="tag" size="small" class="common-tag" effect="plain">
                         {{ tag }}
                     </el-tag>
                 </div>
@@ -57,12 +52,7 @@
 
             <!-- 评论输入框 -->
             <div class="comment-input">
-                <el-input
-                    v-model="commentContent"
-                    type="textarea"
-                    :rows="3"
-                    placeholder="说点什么吧..."
-                />
+                <el-input v-model="commentContent" type="textarea" :rows="3" placeholder="说点什么吧..." />
                 <div class="comment-submit">
                     <el-button type="primary" @click="submitComment">
                         <Icon name="pencil-square" :size="14" />
@@ -73,9 +63,7 @@
 
             <!-- 评论列表 -->
             <div class="comment-list">
-                <div v-for="comment in article.commentList" 
-                     :key="comment.id" 
-                     class="comment-item">
+                <div v-for="comment in article.commentList" :key="comment.id" class="comment-item">
                     <div class="comment-user">
                         <el-avatar :size="40" :src="comment.avatar" />
                         <div class="user-info">
@@ -103,11 +91,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Icon from '@/components/Icon.vue'
 import { ElMessage } from 'element-plus'
 import MarkdownIt from 'markdown-it'
+import { getArticleDetail } from '@/api/ArticleView'
+
+// 获取文章详情
+const getArticles = async () => {
+    const res = await getArticleDetail(route.params.id as string)
+    console.log(res);
+}
 
 const md = new MarkdownIt({
     html: true,
@@ -234,6 +229,11 @@ const handleLike = (comment: any) => {
 const handleReply = (comment: any) => {
     ElMessage.info('回复功能开发中...')
 }
+
+onMounted(() => {
+    getArticles()
+})
+
 </script>
 
 <style scoped>
