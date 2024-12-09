@@ -35,8 +35,14 @@
                     </div>
                 </template>
                 <div class="tags-content">
-                    <el-tag v-for="tag in tags" :key="tag.name" :type="tag.type" class="tag-item" effect="plain"
-                        @click="handleTagClick(tag.name)">
+                    <el-tag 
+                        v-for="tag in tags" 
+                        :key="tag.name" 
+                        class="tag-item" 
+                        effect="plain"
+                        :style="getRandomTagStyle()"
+                        @click="handleTagClick(tag.name)"
+                    >
                         {{ tag.name }}({{ tag.count }})
                     </el-tag>
                 </div>
@@ -137,6 +143,7 @@ import type {
     TypeInfo,
     ArticleQueryParams
 } from '@/types/home'
+import { getRandomTagStyle } from '@/utils/tagColors'
 
 const router = useRouter()
 

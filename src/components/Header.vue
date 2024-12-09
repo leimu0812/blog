@@ -2,7 +2,7 @@
     <div class="header-container" :class="{ 'header-hidden': isHeaderHidden, 'header-scrolled': isScrolled }">
         <!-- 移动端汉堡菜单按钮 -->
         <div class="mobile-menu-btn" @click="toggleMobileMenu" v-show="isMobile">
-            <Icon :name="mobileMenuVisible ? 'x-lg' : 'list'" :size="24" />
+            <Icon :name="mobileMenuVisible ? 'x-lg' : 'list'" :size="15" />
         </div>
 
         <!-- PC端菜单 -->

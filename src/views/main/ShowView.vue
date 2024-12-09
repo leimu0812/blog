@@ -1,23 +1,11 @@
 <template>
   <div class="show-container">
-    <!-- 归档头部 -->
-    <div class="show-header fade-in">
-      <h2 class="section-title">归档</h2>
-      <p class="section-subtitle">探索不同的内容分类</p>
-    </div>
-
     <!-- 标签部分 -->
     <div class="tags-section fade-in" style="animation-delay: 0.1s">
       <h3 class="subsection-title">标签云</h3>
       <div class="tags-container">
-        <el-tag
-          v-for="tag in tags"
-          :key="tag.id"
-          class="tag-item"
-          :style="getRandomTagStyle()"
-          @click="handleTagClick(tag)">
+        <el-tag v-for="tag in tags" :key="tag.name" class="tag-item" effect="plain" :style="getRandomTagStyle()">
           {{ tag.name }}
-          <span class="tag-count">({{ tag.count }})</span>
         </el-tag>
       </div>
     </div>
@@ -26,10 +14,7 @@
     <div class="channels-section fade-in" style="animation-delay: 0.2s">
       <h3 class="subsection-title">频道分类</h3>
       <div class="channel-grid">
-        <el-card 
-          v-for="channel in channels" 
-          :key="channel.id" 
-          class="common-card channel-card"
+        <el-card v-for="channel in channels" :key="channel.id" class="common-card channel-card"
           @click="handleChannelClick(channel)">
           <div class="channel-icon">
             <Icon :name="channel.icon" :size="30" color="white" />
@@ -48,11 +33,7 @@
               </div>
             </div>
             <div class="channel-tags">
-              <el-tag 
-                v-for="tag in channel.tags" 
-                :key="tag"
-                size="small"
-                class="channel-tag"
+              <el-tag v-for="tag in channel.tags" :key="tag" size="small" class="channel-tag"
                 :style="getRandomTagStyle()">
                 {{ tag }}
               </el-tag>
@@ -65,23 +46,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Icon from '@/components/Icon.vue'
+import { getRandomTagStyle } from '@/utils/tagColors'
+import type { Tag } from '@/types/home'
+import { getTags } from '@/api/HomeView'
 
 const router = useRouter()
 
 // 标签数据
-const tags = ref([
-  { id: 1, name: '技术', count: 15 },
-  { id: 2, name: '生活', count: 8 },
-  { id: 3, name: '随笔', count: 12 },
-  { id: 4, name: '编程', count: 20 },
-  { id: 5, name: '旅行', count: 6 },
-  { id: 6, name: '美食', count: 9 },
-  { id: 7, name: '游戏', count: 11 },
-])
-
+const tags = ref<Tag[]>([])
 // 频道数据
 const channels = ref([
   {
@@ -113,22 +88,6 @@ const channels = ref([
   }
 ])
 
-// 生成随机标签样式
-const getRandomTagStyle = () => {
-  const colors = [
-    { bg: '#e5f7ff', color: '#409EFF' },
-    { bg: '#f0f9eb', color: '#67C23A' },
-    { bg: '#fdf6ec', color: '#E6A23C' },
-    { bg: '#fef0f0', color: '#F56C6C' }
-  ]
-  const color = colors[Math.floor(Math.random() * colors.length)]
-  return {
-    backgroundColor: color.bg,
-    color: color.color,
-    border: 'none'
-  }
-}
-
 // 处理标签点击
 const handleTagClick = (tag: any) => {
   router.push(`/tag/${tag.id}`)
@@ -138,6 +97,21 @@ const handleTagClick = (tag: any) => {
 const handleChannelClick = (channel: any) => {
   router.push(`/channel/${channel.id}`)
 }
+
+// 获取标签信息
+const getTag = async () => {
+  try {
+    const res = await getTags();
+    if (res.code === 200 && res.data) {
+      tags.value = res.data;
+    }
+  } catch (error) {
+    console.error('获取标签失败:', error);
+  }
+};
+onMounted(() => {
+  getTag();
+})
 </script>
 
 <style scoped>

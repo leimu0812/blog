@@ -2,22 +2,22 @@
     <div class="article-container">
         <!-- 文章标题区域 -->
         <div class="article-header fade-in">
-            <h1 class="title">{{ article.title }}</h1>
+            <h1 class="title">{{ articles.title }}</h1>
             <div class="article-meta">
                 <el-tag size="small" class="common-tag category-tag">
-                    {{ article.category }}
+                    {{ articles.category }}
                 </el-tag>
                 <span class="meta-item">
                     <Icon name="calendar3" :size="14" />
-                    {{ article.date }}
+                    {{ articles.publishTime }}
                 </span>
                 <span class="meta-item">
                     <Icon name="eye" :size="14" />
-                    {{ article.views }} 阅读
+                    {{ articles.views }} 阅读
                 </span>
                 <span class="meta-item">
                     <Icon name="chat" :size="14" />
-                    {{ article.comments }} 评论
+                    {{ 0 }} 评论
                 </span>
             </div>
         </div>
@@ -33,8 +33,8 @@
             <div class="article-tags">
                 <Icon name="tags" :size="14" />
                 <div class="tags-list">
-                    <el-tag v-for="tag in article.tags" :key="tag" size="small" class="common-tag" effect="plain">
-                        {{ tag }}
+                    <el-tag v-for="tag in articles.tags" :key="tag.id" size="small" class="common-tag" effect="plain">
+                        {{ tag.name }}
                     </el-tag>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                 <div class="section-header">
                     <Icon name="chat-square-text" :size="16" />
                     <span>评论区</span>
-                    <span class="comment-count">{{ article.comments }} 条评论</span>
+                    <span class="comment-count">{{ 0 }} 条评论</span>
                 </div>
             </template>
 
@@ -63,7 +63,7 @@
 
             <!-- 评论列表 -->
             <div class="comment-list">
-                <div v-for="comment in article.commentList" :key="comment.id" class="comment-item">
+                <div v-for="comment in commentList" :key="comment.id" class="comment-item">
                     <div class="comment-user">
                         <el-avatar :size="40" :src="comment.avatar" />
                         <div class="user-info">
@@ -91,123 +91,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Icon from '@/components/Icon.vue'
 import { ElMessage } from 'element-plus'
 import MarkdownIt from 'markdown-it'
 import { getArticleDetail } from '@/api/ArticleView'
+import type { Articles } from "@/types/home";
+
+// 文章数据
+const articles = ref<Articles>({
+    id: '',
+    title: '',
+    summary: '',
+    content: '',
+    coverImg: '',
+    coverImgUrl: '',
+    category: '',
+    views: 0,
+    isTop: 0,
+    status: '',
+    publishTime: '',
+    createdAt: '',
+    updatedAt: '',
+    tags: []
+});
+
+// 渲染的内容
+const renderedContent = ref('');
 
 // 获取文章详情
-const getArticles = async () => {
-    const res = await getArticleDetail(route.params.id as string)
-    console.log(res);
-}
-
-const md = new MarkdownIt({
-    html: true,
-    linkify: true,
-    typographer: true,
-    breaks: true,
-    highlight: function (str: string, lang: string): string {
-        // 这里可以添加代码高亮功能
-        return `<pre class="language-${lang}"><code>${str}</code></pre>`
-    }
-})
-
-const route = useRoute()
-const commentContent = ref('')
-
-// 测试数据
-const article = ref({
-    id: 1,
-    title: '测试文章标题',
-    content: `
-# Markdown 测试文章
-
-这是一篇用来测试 Markdown 渲染的文章。
-
-## 基础语法
-
-### 1. 文本样式
-
-普通文本段落
-
-**加粗文本** 和 *斜体文本*
-
-~~删除线文本~~
-
-### 2. 列表
-
-无序列表：
-- 项目一
-- 项目二
-- 项目三
-
-有序列表：
-1. 第一项
-2. 第二项
-3. 第三项
-
-### 3. 引用
-
-> 这是一段引用文本
-> 可以有多行
->> 也可以嵌套引用
-
-### 4. 代码
-
-行内代码：\`console.log('Hello World')\`
-
-代码块：
-\`\`\`javascript
-function greeting(name) {
-    return \`Hello, \${name}!\`;
-}
-
-console.log(greeting('World'));
-\`\`\`
-
-### 5. 表格
-
-| 表头1 | 表头2 | 表头3 |
-|-------|-------|-------|
-| 内容1 | 内容2 | 内容3 |
-| 行2列1 | 行2列2 | 行2列3 |
-
-### 6. 链接和图片
-
-[链接文本](https://example.com)
-
-![图片描述](https://example.com/image.jpg)
-
----
-
-### 7. 任务列表
-
-- [x] 已完成任务
-- [ ] 未完成任务
-- [ ] 待办事项
-`,
-    category: '测试分类',
-    date: '2024-03-21',
-    views: 100,
-    comments: 1,
-    tags: ['Markdown', '测试', '示例'],
-    commentList: [
-        {
-            id: 1,
-            username: '测试用户',
-            avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-            content: '文章排版很清晰！',
-            time: '2024-03-21 15:30',
-            likes: 0
+const getArticle = async (id: string | number) => {
+    try {
+        const res = await getArticleDetail(id);
+        if (res.code === 200) {
+            articles.value = res.data;
+            // 确保 content 存在再渲染
+            if (articles.value.content) {
+                renderedContent.value = md.render(articles.value.content);
+            }
         }
-    ]
-})
+    } catch (error) {
+        console.error('获取文章详情失败:', error);
+    }
+};
 
-// 渲染 Markdown 内容
-const renderedContent = ref(md.render(article.value.content))
+// 在路由参数变化时获取文章
+const route = useRoute();
+watch(() => route.params.id, (newId) => {
+    if (newId) {
+        // 确保 newId 是单个值而不是数组
+        const id = Array.isArray(newId) ? newId[0] : newId;
+        getArticle(id);
+    }
+}, { immediate: true });
+
+
+// 评论内容
+const commentContent = ref('')
+// 评论列表
+const commentList = ref([
+    {
+        id: 1,
+        username: '测试用户',
+        avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+        content: '文章排版很清晰！',
+        time: '2024-03-21 15:30',
+        likes: 0
+    }
+])
 
 // 提交评论
 const submitComment = () => {
@@ -230,10 +182,17 @@ const handleReply = (comment: any) => {
     ElMessage.info('回复功能开发中...')
 }
 
-onMounted(() => {
-    getArticles()
+// 渲染 Markdown 内容
+const md = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+    breaks: true,
+    highlight: function (str: string, lang: string): string {
+        // 这里可以添加代码高亮功能
+        return `<pre class="language-${lang}"><code>${str}</code></pre>`
+    }
 })
-
 </script>
 
 <style scoped>

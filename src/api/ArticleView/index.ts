@@ -1,6 +1,6 @@
 import request from "@/utils/axios";
-import type { Articles } from "@/types/home";
+import type { ArticleVO } from "@/api/ArticleView/types";
 
-export async function getArticleDetail(id: string) {
-  return request.get<Articles>("/articleDetail", { id });
-}
+export async function getArticleDetail(id: string | number){
+    return request.get<ArticleVO>(`/article/${id}`);
+};
